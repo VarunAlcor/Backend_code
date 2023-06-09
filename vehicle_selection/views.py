@@ -62,16 +62,18 @@ def search_car(request):
 
     #apply search filter to queryset 
 
-    search_term= request.query_params.get('search',None)
-    starts_with_letter = request.query_params.get('starts_with', None)
-    ends_with_letter = request.query_params.get('ends_with', None)
+    # search_term= request.query_params.get('search',None)
+    # starts_with_letter = request.query_params.get('starts_with', None)
+    # ends_with_letter = request.query_params.get('ends_with', None)
 
-    if starts_with_letter is not None:
-        filtered_queryset = filtered_queryset.filter(carname__istartswith=starts_with_letter)
+    # if starts_with_letter is not None:
+    #     filtered_queryset = filtered_queryset.filter(carname__istartswith=starts_with_letter)
     
-    elif ends_with_letter is not None:
-        filtered_queryset = filtered_queryset.filter(carname__iendswith=ends_with_letter)
-    elif search_term is not None:
+    # elif ends_with_letter is not None:
+    #     filtered_queryset = filtered_queryset.filter(carname__iendswith=ends_with_letter)
+    # elif search_term is not None:
+    search_term = request.query_params.get('search', None)
+    if search_term is not None:
             filtered_queryset = filtered_queryset.filter(
                 Q(modelyear__icontains=search_term) |
                 Q(YOR__icontains=search_term) |
@@ -184,13 +186,16 @@ def displayfilter(request):
         filtered_queryset = filtered_queryset.filter(
             Q(modelyear__icontains=search_term) |
             Q(modelcategory__icontains=search_term) |
-            Q(grade__icontains=search_term) |
+            Q(gradename__icontains=search_term) |
             Q(modelcode__icontains=search_term) |
-            Q(commissionno__icontains=search_term) |
-            Q(VINnumber__icontains=search_term) |
-            Q(dealercode__icontains=search_term) |
-            Q(modeltype__icontains=search_term) |
-            Q(stockinventory__icontains=search_term)
+            Q(colorname__icontains=search_term) |
+            Q(colorcode__icontains=search_term) |
+            Q(interiorname__icontains=search_term) |
+            Q(interiorcode__icontains=search_term) |
+            Q(vehiclepriceintax__icontains=search_term) |
+            Q(distributorinventory__icontains=search_term) |
+            Q(storeinventory__icontains=search_term)
+            
         ) 
 
     # Serialize the filtered queryset
@@ -202,11 +207,20 @@ def displayfilter(request):
 
 #SELECT CARE  
 
-@api_view(['GET'])
+@api_view(['GET','POST'])
 def select_cars(request):
-    Selectedcar_obj=Selectedcar.objects.all() #queryset
-    serializer=Selectedcarserializer(Selectedcar_obj, many=True)
-    return Response(serializer.data)
+ 
+    if request.method == 'POST':
+        serializer = Selectedcarserializer(data=request.data, many=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'msg': 'Data Created'})
+        return Response(serializer.errors)
+    else:
+        # handle GET
+        Selectedcar_obj=Selectedcar.objects.all() #queryset
+        serializer=Selectedcarserializer(Selectedcar_obj, many=True)
+        return Response(serializer.data)
 
 
 #aparna

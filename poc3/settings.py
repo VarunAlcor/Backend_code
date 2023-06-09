@@ -25,10 +25,25 @@ SECRET_KEY = 'django-insecure-%c97(yvx_dh56z46*q0132bdb2%+aef_ccpf+6(uh$_!gx=@y=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = [
+       'http://localhost:4200',
+]
+
 ALLOWED_HOSTS = []
 
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-encoding',
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    ]
 
-# Application definition
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,6 +59,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,7 +68,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
+
 
 ROOT_URLCONF = 'poc3.urls'
 
@@ -80,9 +99,9 @@ WSGI_APPLICATION = 'poc3.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'poc_latest',
+        'NAME': 'VMS',
         'USER': 'postgres',
-        'PASSWORD' : '1234',
+        'PASSWORD' : 'Riyanshi@20',
         'HOST':'localhost',
     }
 }
@@ -133,3 +152,10 @@ REST_FRAMEWORK = {
     'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
 }
 
+REST_FRAMEWORK = {
+    # Use Django's standard `django.contrib.auth` permissions,
+    # or allow read-only access for unauthenticated users.
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ]
+}
