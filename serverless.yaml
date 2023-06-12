@@ -1,0 +1,67 @@
+service: vehicle_selection
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-prune-plugin
+  - serverless-python-requirements
+  - serverless-wsgi
+useDotenv: true
+
+custom:
+  dotenv:
+    logging: false
+  pythonRequirements:
+    dockerizePip: non-linux
+    zip: true
+    fileName: requirements.txt
+  stage: test
+  wsgi:
+    app: vehicle_selection.wsgi.application
+    packRequirements: false
+  prune:
+    automatic: true
+    number: 3
+
+functions:
+  - app:
+      handler: wsgi_handler.handler
+      events:
+        - http: ANY /
+        - http: ANY /{proxy+}
+      timeout: 30
+
+provider:
+  name: aws
+  role: arn:aws:iam::257431099146:role/evasrole
+  profile: vehicle_selection
+  region: ap-northeast-1
+  runtime: python3.10
+  versionFunctions: false
+  stage: test
+  timeout: 60
+  vpc:
+    securityGroupIds:
+      - sg-0406b46eaf4d7bd5e
+    subnetIds:
+      - subnet-05613b311cd22d28b
+      - subnet-0ca2ab6f87ebbd1ff
+      - subnet-0bf5bf172642fded6
+  deploymentBucket:
+    name: evascode
+  apiGateway:
+    shouldStartNameWithService: true
+  lambdaHashingVersion: 20201221
+
+package:
+  individually:
+    true
+  exclude:
+    - .cache/**
+    - .env
+    - .git/**
+    - .github/**
+    - .pytest_cache/**
+    - .serverless/**
+    - node_modules/**
+    - static/**
+    - db.sqlite3
